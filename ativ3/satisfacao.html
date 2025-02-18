@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Satisfacao</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    img {
+      width: 600px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="counter-container"></div>
+    <button id="yesBtn" value="sim">Sim</button>
+    <button id="noBtn" value="nao">Não</button>
+  </div>
+
+  <script>
+
+    function getCounters() {
+      fetch('http://localhost:3001/contador')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+          
+          document.getElementById('counter-container').innerHTML = '<p><b>Sim:</b> ' + data.sim + '<p><b>Não:</b> ' + data.nao;
+        })
+        .catch(error => console.error('Error load counters', error));
+    }
+    window.onload = getCounters;
+
+    function addCounters() {
+      fetch('http://localhost:3001/contador',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ vote: event.target.value })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+          getCounters();
+        })
+        .catch(error => console.error('Error add counters', error));
+    }
+
+    window.onload = addCounters;
+    document.getElementById('yesBtn').onclick = addCounters;
+    document.getElementById('noBtn').onclick = addCounters;
+  </script>
+</body>
+</html>
